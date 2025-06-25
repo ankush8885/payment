@@ -15,11 +15,11 @@ export const checkout = async function (req, res) {
 
 export const paymentVerification = async function (req, res) {
 
-  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
+  const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
 
   const body = razorpay_order_id +"|"+razorpay_payment_id;
-  
-  const expectedSignature = crypto.createHmac('sha256',process.env.RAZOR_SECRET_KEY).update(body.toString()).digest('hex')
+  //converting signature
+  const expectedSignature = crypto.createHmac('sha256',process.env.RAZOR_SECRET_KEY).update(body.toString()).digest('hex');
 
   if (expectedSignature == razorpay_signature) {
     //saving in db
@@ -27,7 +27,7 @@ export const paymentVerification = async function (req, res) {
       razorpay_payment_id,
       razorpay_order_id,
       razorpay_signature});
-    
+    //redirecting url
     res.redirect(`http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`);
 
   } else{
